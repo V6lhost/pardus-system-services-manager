@@ -93,10 +93,218 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox">
+           <widget class="QGroupBox" name="groupBoxUnitDetails">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>200</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="title">
              <string/>
             </property>
+            <layout class="QGridLayout" name="gridLayout">
+             <property name="leftMargin">
+              <number>3</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>3</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <property name="horizontalSpacing">
+              <number>0</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>2</number>
+             </property>
+             <item row="0" column="2">
+              <widget class="QLabel" name="labelUnitNameText">
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="labelUnitSubStatus">
+               <property name="text">
+                <string>Sub Status:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="labelUnitLoadStatus">
+               <property name="text">
+                <string>Status:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="Line" name="line_2">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelUnitDescription">
+               <property name="text">
+                <string>Description:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QPushButton" name="pushButtonUnitStop">
+               <property name="text">
+                <string>Stop</string>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="0">
+              <widget class="QLabel" name="labelUnitExitCode">
+               <property name="text">
+                <string>Exit Code:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="2">
+              <widget class="QLabel" name="labelUnitLoadStatusText">
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+               <property name="wordWrap">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="2">
+              <widget class="QLabel" name="labelUnitActiveStatusText">
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QRadioButton" name="radioButtonUnitEnabled">
+               <property name="text">
+                <string>Enabled</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="labelUnitDescriptionText">
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="2">
+              <widget class="QLabel" name="labelUnitSubStatusText">
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="labelUnitActiveStatus">
+               <property name="text">
+                <string>Active Status:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="0">
+              <widget class="Line" name="line_3">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="2">
+              <widget class="QLabel" name="labelUnitExitCodeText">
+               <property name="text">
+                <string>TextLabel</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelUnitName">
+               <property name="text">
+                <string>Unit Name:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QPushButton" name="pushButtonUnitStartRestart">
+               <property name="text">
+                <string>Start/Restart</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="Line" name="line_4">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="Line" name="line_5">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="2">
+              <widget class="Line" name="line_6">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="0">
+              <widget class="QPushButton" name="pushButtonEditUnitFile">
+               <property name="text">
+                <string>Edit Unit File</string>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="2">
+              <widget class="QPushButton" name="pushButtonUnitShowLogs">
+               <property name="text">
+                <string>Show Logs</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -131,10 +339,158 @@
            </widget>
           </item>
           <item>
+           <layout class="QVBoxLayout" name="verticalLayout_4"/>
+          </item>
+          <item>
            <widget class="QGroupBox" name="groupBoxApplicationDetails">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>200</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="title">
              <string/>
             </property>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <property name="sizeConstraint">
+              <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+             </property>
+             <item alignment="Qt::AlignmentFlag::AlignHCenter">
+              <widget class="QLabel" name="labelIcon">
+               <property name="minimumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>64</width>
+                 <height>64</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>icon</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <widget class="QLabel" name="labelApplicationName">
+                 <property name="text">
+                  <string>Application Name:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelApplicationNameText">
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::NoFrame</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Sunken</enum>
+                 </property>
+                 <property name="text">
+                  <string>application_name</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item alignment="Qt::AlignmentFlag::AlignBottom">
+              <widget class="QLabel" name="labelApplicationDescription">
+               <property name="text">
+                <string>Application Description:</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item alignment="Qt::AlignmentFlag::AlignTop">
+              <widget class="QLabel" name="labelApplicationDescriptionText">
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>application_description</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="sizeConstraint">
+                <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
+               </property>
+               <item alignment="Qt::AlignmentFlag::AlignBottom">
+                <widget class="QPushButton" name="pushButtonEditEntryFile">
+                 <property name="text">
+                  <string>Edit Entry File</string>
+                 </property>
+                </widget>
+               </item>
+               <item alignment="Qt::AlignmentFlag::AlignBottom">
+                <widget class="QPushButton" name="pushButtonRemoveFromAutostart">
+                 <property name="text">
+                  <string>Remove</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelEntryFilePath">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">font-size: 10px;
+</string>
+               </property>
+               <property name="text">
+                <string>unit_file_path</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
