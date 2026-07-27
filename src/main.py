@@ -90,6 +90,15 @@ class MainWindow(QMainWindow):
 
             self.tableModel.appendRow([item_name, item_state, item_active_status])
 
+            if unit_active_status.lower() == "failed":
+                item_active_status.setForeground(Qt.red)
+            elif unit_active_status.lower() == "active":
+                item_active_status.setForeground(Qt.green)
+            elif unit_active_status.lower() == "inactive":
+                item_active_status.setForeground(Qt.yellow)
+            else:
+                item_active_status.setForeground(Qt.gray)
+
     def add_autostart_applications_to_gui(self):
         autostart_applications_dir = Path.home() / Path(".config/autostart")
         entries = list_desktop_entries(autostart_applications_dir)
