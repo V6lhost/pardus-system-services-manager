@@ -2,6 +2,7 @@ from pydbus import SystemBus
 from pathlib import Path
 from xdg.DesktopEntry import DesktopEntry
 import sys
+import shutil
 
 def list_systemd_units():
     bus = SystemBus()
@@ -20,7 +21,13 @@ def get_unit_active_status(unit_name):
         return "activation is not possible"
 
 def list_desktop_entries(path):
-    return list(path.iterdir())
+    files = list(path.iterdir())
+    entries = []
+    for file in files:
+        if file.suffix == ".desktop":
+            entries.append(file)
+    
+    return entries
 
 def get_application_details(path):
     application_data = {}
@@ -35,3 +42,10 @@ def get_application_details(path):
     application_data["icon"] = application_icon if application_icon != "" else "application-x-executable"
 
     return application_data
+
+def copy_desktop_entry(source, destination):
+    destination_file = destination / source.name
+    if destination_file.exists():
+        return
+    
+    shutil.copy(source, destination)

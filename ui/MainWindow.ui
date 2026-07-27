@@ -121,6 +121,12 @@
             <property name="editTriggers">
              <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
             </property>
+            <property name="dragDropMode">
+             <enum>QAbstractItemView::DragDropMode::NoDragDrop</enum>
+            </property>
+            <property name="defaultDropAction">
+             <enum>Qt::DropAction::IgnoreAction</enum>
+            </property>
             <property name="uniformItemSizes">
              <bool>true</bool>
             </property>
