@@ -55,8 +55,17 @@ class MainWindow(QMainWindow):
 
         self.listModel = QStandardItemModel(self)
         self.listViewAutostartApplications.setModel(self.listModel)
+
+        self.tableModel = QStandardItemModel(self)
+        self.tableViewUnits.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
+        self.tableProxyModel = QSortFilterProxyModel(self)
+        self.tableProxyModel.setSourceModel(self.tableModel)
+        self.tableProxyModel.setFilterKeyColumn(0)
+        self.tableProxyModel.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.tableViewUnits.setModel(self.tableProxyModel)
+
         self.stackedWidget.setCurrentIndex(0)
-        self.tableWidgetServices.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
         self.connect_ui_events()
 
@@ -65,21 +74,21 @@ class MainWindow(QMainWindow):
 
     def add_units_to_gui(self):
         units = list_systemd_units()
-        self.tableWidgetServices.setRowCount(len(units))
-        for row, unit in enumerate(units):
+
+        self.tableModel.clear()
+        self.tableModel.setHorizontalHeaderLabels(["Name", "State", "Active Status"])
+
+        for unit in units:
             unit_path = unit[0]
             unit_name = unit_path.split("/")[-1]
             unit_state = unit[1]
             unit_active_status = get_unit_active_status(unit_name)
-            self.tableWidgetServices.setItem(
-                row, 0, QTableWidgetItem(unit_name)
-            )
-            self.tableWidgetServices.setItem(
-                row, 1, QTableWidgetItem(unit_state)
-            )
-            self.tableWidgetServices.setItem(
-                row, 2, QTableWidgetItem(unit_active_status)
-            )
+
+            item_name = QStandardItem(unit_name)
+            item_state = QStandardItem(unit_state)
+            item_active_status = QStandardItem(unit_active_status)
+
+            self.tableModel.appendRow([item_name, item_state, item_active_status])
 
     def add_autostart_applications_to_gui(self):
         autostart_applications_dir = Path.home() / Path(".config/autostart")
@@ -96,10 +105,14 @@ class MainWindow(QMainWindow):
         autostart_applications_dir = Path.home() / Path(".config/autostart")
         copy_desktop_entry(entry_path, autostart_applications_dir)
         self.add_autostart_applications_to_gui() # refresh the autostart applications list
+    
+    def filter_units(self, text):
+        self.tableProxyModel.setFilterFixedString(text)
         
     def connect_ui_events(self):
         self.pushButtonAutostartApplications.toggled.connect(lambda page_id: self.stackedWidget.setCurrentIndex(page_id))
         self.pushButtonAddApplication.clicked.connect(self.open_applications_dialog)
+        self.lineEditSearchUnits.textChanged.connect(self.filter_units)
 
     def open_applications_dialog(self):
         applications_dialog = ApplicationsDialog(self)
