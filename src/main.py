@@ -1,4 +1,4 @@
-import signal, sys
+import signal, sys, os
 from pathlib import Path
 from PySide6.QtWidgets import (
     QApplication,
@@ -26,6 +26,13 @@ from PySide6.QtGui import (
 )
 
 from helper_functions import *
+
+def resource_path(relative_path):
+    if hasattr(sys, "_MEIPASS"):
+        base_path = Path(sys._MEIPASS)
+    else:
+        base_path = Path(__file__).resolve().parent.parent
+    return base_path / relative_path
 
 # Custom ui loader class and function to make the code cleaner
 class UiLoader(QUiLoader):
@@ -66,8 +73,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
 
-        current_dir = Path(__file__).resolve().parent
-        ui_path = current_dir.parent / "ui" / "MainWindow.ui"
+        ui_path = resource_path("ui/MainWindow.ui")
         load_ui(ui_path, self)
 
         self.listModel = QStandardItemModel(self)
@@ -304,8 +310,7 @@ class ApplicationsDialog(QDialog):
     def __init__(self, parent=None):
         super(ApplicationsDialog, self).__init__()
 
-        current_dir = Path(__file__).resolve().parent
-        ui_path = current_dir.parent / "ui" / "ApplicationsDialog.ui"
+        ui_path = resource_path("ui/ApplicationsDialog.ui")
         load_ui(ui_path, self)
 
         self.listModel = QStandardItemModel(self)
@@ -362,8 +367,7 @@ class EditUnitWarningDialog(QDialog):
     def __init__(self, parent=None, unit_name=None):
         super(EditUnitWarningDialog, self).__init__()
 
-        current_dir = Path(__file__).resolve().parent
-        ui_path = current_dir.parent / "ui" / "EditUnitWarningDialog.ui"
+        ui_path = resource_path("ui/EditUnitWarningDialog.ui")
         load_ui(ui_path, self)
 
         self.labelUnitNameText.setText(unit_name)
