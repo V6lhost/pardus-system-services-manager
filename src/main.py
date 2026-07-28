@@ -234,6 +234,8 @@ class MainWindow(QMainWindow):
         entry = self.labelEntryFilePath.text()
         path = Path(entry)
         remove_autostart_entry_file(path)
+        self.pushButtonEditEntryFile.setEnabled(False)
+        self.pushButtonRemoveFromAutostart.setEnabled(False)
         self.add_autostart_applications_to_gui()
 
     def on_unit_item_clicked(self, selected):
@@ -258,6 +260,8 @@ class MainWindow(QMainWindow):
             return
 
         index = indexes[0]
+        self.pushButtonEditEntryFile.setEnabled(True)
+        self.pushButtonRemoveFromAutostart.setEnabled(True)
         self.fill_application_details(index.data(Qt.UserRole))
 
     def set_unit_enabled(self):
