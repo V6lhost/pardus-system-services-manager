@@ -164,7 +164,7 @@ class MainWindow(QMainWindow):
         self.radioButtonUnitEnabled.setChecked(True if unit_state == "enabled" else False)
         self.radioButtonUnitEnabled.setEnabled(True if unit_state in ["enabled", "disabled", "alias"] else False)
 
-        self.pushButtonUnitStartRestart.setEnabled(True if unit_active_state != "activation is not possible" else False)
+        self.pushButtonUnitStartRestart.setEnabled(True if unit_active_state != "unknown" else False)
         self.pushButtonUnitStop.setEnabled(True if unit_active_state == "active" else False)
 
         self.labelUnitLoadStatusText.setText(unit_state)

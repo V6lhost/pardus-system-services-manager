@@ -1,4 +1,3 @@
-from pydbus import SystemBus
 from pathlib import Path
 from xdg.DesktopEntry import DesktopEntry
 import sys
@@ -6,7 +5,6 @@ import shutil
 import subprocess
 import json
 
- # Using subprocess is way faster than listing units with dbus
  
 def list_systemd_units():
     command = ["systemctl", "list-unit-files", "-o", "json"]
@@ -21,36 +19,30 @@ def list_systemd_units():
     return json.loads(output.stdout)
 
 def get_unit_active_status(unit_name):
-    bus = SystemBus()
-    systemd = bus.get(".systemd1", "/org/freedesktop/systemd1")
     try:
-        unit_path = systemd.LoadUnit(unit_name)
-        unit = bus.get(".systemd1", unit_path)
-        return unit.ActiveState
+        result = subprocess.run(
+            ["systemctl", "is-active", unit_name],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False  # if unit is stopped/failed this command will return error and cause problems. disable it using check=False
+        )
+        status = result.stdout.strip()
+        if status:
+            return status
+        else:
+            return "unknown"
     except Exception:
-        return "activation is not possible"
-
+        return "unknown"
+    
 def get_unit_description(unit_name):
-    try:
-        bus = SystemBus()
-        systemd = bus.get(".systemd1", "/org/freedesktop/systemd1")
-        unit_path = systemd.GetUnit(unit_name)
-        unit_obj = bus.get(".systemd1", unit_path)
-        return unit_obj.Description
-        
-    except Exception as e:
-        return "No description"
+    return get_property(unit_name, "Description")
 
 def get_unit_exit_status(unit_name):
-    try:
-        bus = SystemBus()
-        systemd = bus.get(".systemd1", "/org/freedesktop/systemd1")
-        unit_path = systemd.GetUnit(unit_name)
-        props = bus.get(".systemd1", unit_path)
-        
-        code = getattr(props, "ExecMainCode", None)
-        status = getattr(props, "ExecMainStatus", None)
-        result = getattr(props, "Result", None)
+    try:        
+        code = get_property(unit_name, "ExecMainCode")
+        status = get_property(unit_name, "ExecMainStatus")
+        result = get_property(unit_name, "Result")
         
         return {
             "code": code,
@@ -83,13 +75,22 @@ def get_unit_logs(unit_name):
         return "Error while getting logs"
 
 def get_unit_file_path(unit_name):
-        bus = SystemBus()
-        systemd = bus.get(".systemd1", "/org/freedesktop/systemd1")
-        unit_path = systemd.LoadUnit(unit_name)
-        props = bus.get(".systemd1", unit_path)
-        return getattr(props, "FragmentPath", "")
+        return get_property(unit_name, "FragmentPath")
 
-def run_systemctl_command(action, unit_name):
+def get_property(unit_name, property):
+    try:
+        result = subprocess.run(
+            ["systemctl", "show", unit_name, f"--property={property}", "--value"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        return result.stdout.strip()
+    except Exception:
+        return "failed"
+
+def run_systemctl_command_privileged(action, unit_name):
     try:
         cmd = ["pkexec", "systemctl", action, unit_name]
         
@@ -109,19 +110,19 @@ def run_systemctl_command(action, unit_name):
         return False
 
 def unit_enable(unit_name):
-    return run_systemctl_command("enable", unit_name)
+    return run_systemctl_command_privileged("enable", unit_name)
 
 def unit_disable(unit_name):
-    return run_systemctl_command("disable", unit_name)
+    return run_systemctl_command_privileged("disable", unit_name)
 
 def unit_start(unit_name):
-    return run_systemctl_command("start", unit_name)
+    return run_systemctl_command_privileged("start", unit_name)
 
 def unit_stop(unit_name):
-    return run_systemctl_command("stop", unit_name)
+    return run_systemctl_command_privileged("stop", unit_name)
 
 def unit_restart(unit_name):
-    return run_systemctl_command("restart", unit_name)
+    return run_systemctl_command_privileged("restart", unit_name)
 
 def save_logs_to_temporary_file(unit_name):
     logs = get_unit_logs(unit_name)
