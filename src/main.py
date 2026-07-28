@@ -338,6 +338,7 @@ class ApplicationsDialog(QDialog):
     def connect_ui_events(self):
         self.lineEditSearch.textChanged.connect(self.filter_list)
         self.ok_button.pressed.connect(self.get_selected_application)
+        self.listViewApplications.doubleClicked.connect(self.get_selected_application)
     
     def filter_list(self, text):
         self.proxy_model.setFilterFixedString(text)
