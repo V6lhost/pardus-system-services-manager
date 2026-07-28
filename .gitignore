@@ -7,3 +7,7 @@ src/__pycache__
 build/
 dist/
 main.spec
+
+output_deb/
+debian/usr/share/pardus-system-services-manager/*
+!debian/usr/share/pardus-system-services-manager/

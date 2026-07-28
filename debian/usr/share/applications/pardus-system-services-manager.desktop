@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Pardus System Services Manager
+Comment=Manage systemd services and autostart apps
+Exec=pardus-system-services-manager
+Icon=pardus-system-services-manager
+Terminal=false
+Type=Application
+Categories=System;Settings;

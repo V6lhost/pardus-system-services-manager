@@ -1,0 +1,9 @@
+Package: pardus-system-services-manager
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: V6lhost <v6lhost@proton.me>
+Depends: python3 (>= 3.11)
+Description: Modern systemd service and autostart manager built with PySide6.
+ A lightweight GUI tool to manage Linux system services and autostart applications easily.
