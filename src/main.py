@@ -38,6 +38,15 @@ class UiLoader(QUiLoader):
             return self.baseinstance
         return super().createWidget(class_name, parent, name)
 
+def load_ui(ui_path, baseinstance=None):
+    loader = UiLoader(baseinstance)
+    ui_file = QFile(ui_path)
+    if not ui_file.open(QFile.ReadOnly):
+        return None
+    widget = loader.load(ui_file)
+    ui_file.close()
+    return widget
+
 class UnitListReloadThread(QThread):
     # Use qthread to prevent gui lags. otherwise reloading unit list blockes the gui thread and causes freeze(and sometimes crashes)
     add_units = Signal(list)
@@ -52,16 +61,6 @@ class UnitListReloadThread(QThread):
         
         units = sorted(units, key=lambda x: x["unit_file"].lower())
         self.add_units.emit(units)
-
-def load_ui(ui_path, baseinstance=None):
-    loader = UiLoader(baseinstance)
-    ui_file = QFile(ui_path)
-    if not ui_file.open(QFile.ReadOnly):
-        return None
-    widget = loader.load(ui_file)
-    ui_file.close()
-    return widget
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
