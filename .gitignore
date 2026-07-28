@@ -9,5 +9,5 @@ dist/
 main.spec
 
 output_deb/
-debian/usr/share/pardus-system-services-manager/*
-!debian/usr/share/pardus-system-services-manager/
+debian/usr/share/pardus-system-services-manager/main
+debian/usr/share/pardus-system-services-manager/_internal
