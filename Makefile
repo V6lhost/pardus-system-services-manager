@@ -25,6 +25,13 @@ prepare:
 		exit 1; \
 	fi
 	@echo "[+] dpkg installed."
+	@if [ -f debian/usr/bin/pardus-system-services-manager ]; then \
+		chmod +x debian/usr/bin/pardus-system-services-manager; \
+		echo "[+] Executable permission set for debian/usr/bin/pardus-system-services-manager."; \
+	else \
+		echo "[-] ERR: debian/usr/bin/pardus-system-services-manager not found!"; \
+		exit 1; \
+	fi
 	@echo "[*] Checking virtual environment..."
 	@if [ ! -d "$(VENV_DIR)" ]; then \
 		echo "[+] '$(VENV_DIR)' is not found, creating..."; \
