@@ -177,7 +177,7 @@ class MainWindow(QMainWindow):
             elif unit_active_status == "active":
                 item_active_status.setForeground(Qt.green)
             elif unit_active_status == "inactive":
-                item_active_status.setForeground(Qt.blue)
+                item_active_status.setForeground(Qt.cyan)
             else:
                 item_active_status.setForeground(Qt.gray)
         
