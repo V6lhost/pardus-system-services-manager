@@ -432,8 +432,6 @@ if __name__ == "__main__":
     system_locale = QLocale.system().name()
     language_code = system_locale.split("_")[0]
     translation_file = str(resource_path(f"translations/lang_{language_code}.qm"))
-
-    print(language_code)
     
     if translator.load(translation_file):
         app.installTranslator(translator)
