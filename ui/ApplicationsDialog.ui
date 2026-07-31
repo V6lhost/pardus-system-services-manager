@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>534</width>
+    <width>555</width>
     <height>465</height>
    </rect>
   </property>
@@ -29,14 +29,20 @@
    </item>
    <item>
     <widget class="QListView" name="listViewApplications">
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
      <property name="editTriggers">
       <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
      </property>
      <property name="dragDropMode">
-      <enum>QAbstractItemView::DragDropMode::NoDragDrop</enum>
+      <enum>QAbstractItemView::DragDropMode::DragDrop</enum>
      </property>
      <property name="defaultDropAction">
       <enum>Qt::DropAction::IgnoreAction</enum>
+     </property>
+     <property name="resizeMode">
+      <enum>QListView::ResizeMode::Adjust</enum>
      </property>
      <property name="viewMode">
       <enum>QListView::ViewMode::IconMode</enum>
