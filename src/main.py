@@ -63,11 +63,19 @@ class UnitListReloadThread(QThread):
     
     def run(self):
         units = list_systemd_units()
-        for row,unit in enumerate(units):
-            units[row]["active_status"] = get_unit_active_status(unit["unit_file"])
-        
         units = sorted(units, key=lambda x: x["unit_file"].lower())
         self.add_units.emit(units)
+
+class LoadUnitDescriptionsThread(QThread):
+    # unit paths and descriptions are somethings which should not reload
+    unit_static_informations_ready = Signal(dict)
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+    
+    def run(self):
+        units = list_systemd_units()
+        self.unit_static_informations_ready.emit(list_unit_descriptions(units))
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -94,24 +102,37 @@ class MainWindow(QMainWindow):
         self.stackedWidget.setCurrentIndex(0)
 
         self.units = []
+        self.unit_descriptions = {}
+        self.descriptions_updated = False
         
-        self.thread = UnitListReloadThread(self)
-        self.thread.add_units.connect(self.add_units_to_gui)
+        self.unit_list_reload_thread = UnitListReloadThread(self)
+        self.unit_list_reload_thread.add_units.connect(self.add_units_to_gui)
 
         self.timerUpdateUnits = QTimer()
-        self.timerUpdateUnits.timeout.connect(self.thread.start)
+        self.timerUpdateUnits.timeout.connect(self.unit_list_reload_thread.start)
         self.timerUpdateUnits.start(5000)
 
         # call the thread manually once to load ui faster
-        self.thread.start()
+        self.unit_list_reload_thread.start()
+
+        self.load_unit_descriptions_thread = LoadUnitDescriptionsThread(self)
+        self.load_unit_descriptions_thread.unit_static_informations_ready.connect(self.update_unit_descriptions)
+        self.load_unit_descriptions_thread.start()
 
         self.add_autostart_applications_to_gui()
         self.connect_ui_events()
 
+        
+    def update_unit_descriptions(self, descriptions):
+        self.unit_descriptions = descriptions
+        self.descriptions_updated = True
+
     def add_units_to_gui(self, units):
-        if units == self.units:
+        # compare the given unit list with last unit list before updating table
+        if units == self.units and not self.descriptions_updated:
             return
         self.units = units
+        self.descriptions_updated = False
 
         # get selected unit name to reselect it after updating table
         self.selected_unit_name = None
@@ -125,18 +146,20 @@ class MainWindow(QMainWindow):
 
         self.tableViewUnits.clearSelection()
         self.tableModel.clear()
-        self.tableModel.setHorizontalHeaderLabels(["Name", "State", "Active Status"])
+        self.tableModel.setHorizontalHeaderLabels(["Name", "State", "Active Status", "Preset"])
 
         for unit in units:
             unit_name = unit["unit_file"]
             unit_state = unit["state"]
-            unit_active_status = unit["active_status"]
+            unit_active_status = unit["active"]
+            unit_preset = unit["preset"]
 
             item_name = QStandardItem(unit_name)
             item_state = QStandardItem(unit_state)
             item_active_status = QStandardItem(unit_active_status)
+            item_preset = QStandardItem(unit_preset)
 
-            self.tableModel.appendRow([item_name, item_state, item_active_status])
+            self.tableModel.appendRow([item_name, item_state, item_active_status, item_preset])
 
             if unit_active_status == "failed":
                 item_active_status.setForeground(Qt.red)
@@ -147,23 +170,23 @@ class MainWindow(QMainWindow):
             else:
                 item_active_status.setForeground(Qt.gray)
         
-            # reselect the latest selected unit again. this also helps to update the unit description part automatically
-            if self.selected_unit_name:
-                for row in range(self.tableModel.rowCount()):
-                    item = self.tableModel.item(row, 0)
-                    if item and item.text() == self.selected_unit_name:
-                        source_index = self.tableModel.index(row, 0)
-                        proxy_index = self.tableProxyModel.mapFromSource(source_index)
-                        
-                        if proxy_index.isValid():
-                            self.tableViewUnits.setCurrentIndex(proxy_index)
-                            self.tableViewUnits.selectRow(proxy_index.row())
+        # reselect the latest selected unit again. this also helps to update the unit description part automatically
+        if self.selected_unit_name:
+            for row in range(self.tableModel.rowCount()):
+                item = self.tableModel.item(row, 0)
+                if item and item.text() == self.selected_unit_name:
+                    source_index = self.tableModel.index(row, 0)
+                    proxy_index = self.tableProxyModel.mapFromSource(source_index)
+                    
+                    if proxy_index.isValid():
+                        self.tableViewUnits.setCurrentIndex(proxy_index)
+                        self.tableViewUnits.selectRow(proxy_index.row())
 
     def fill_unit_details(self, unit_name, unit_state, unit_active_state, unit_active_state_color): # take unit state and active state from table instead of check again because checking again takes some time
         self.groupBoxUnitDetails.show()
         self.labelUnitNameText.setText(unit_name)
 
-        unit_description = get_unit_description(unit_name)
+        unit_description = self.unit_descriptions[unit_name]["description"] if self.unit_descriptions else "Loading..."
         self.labelUnitDescriptionText.setText(unit_description)
 
         self.radioButtonUnitEnabled.setChecked(True if unit_state == "enabled" else False)
@@ -175,10 +198,6 @@ class MainWindow(QMainWindow):
         self.labelUnitLoadStatusText.setText(unit_state)
         self.labelUnitActiveStatusText.setText(unit_active_state)
         self.labelUnitActiveStatusText.setStyleSheet(f"color: {unit_active_state_color};")
-    
-        unit_status = get_unit_exit_status(unit_name)
-        self.labelUnitSubStatusText.setText(f"{unit_status['status']}\n{unit_status['result']}")
-        self.labelUnitExitCodeText.setText(f"{unit_status['code']}")
 
         self.pushButtonEditUnitFile.setEnabled(True if not "@" in unit_name else False)
 
@@ -308,7 +327,7 @@ class MainWindow(QMainWindow):
 
 class ApplicationsDialog(QDialog):
     def __init__(self, parent=None):
-        super(ApplicationsDialog, self).__init__()
+        super(ApplicationsDialog, self).__init__(parent)
 
         ui_path = resource_path("ui/ApplicationsDialog.ui")
         load_ui(ui_path, self)

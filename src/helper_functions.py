@@ -7,55 +7,57 @@ import json
 
  
 def list_systemd_units():
-    command = ["systemctl", "list-unit-files", "-o", "json"]
-    
-    output = subprocess.run(
-        command,
+    command_unit_files = ["systemctl", "list-unit-files", "-o", "json"]
+    output_unit_files = subprocess.run(
+        command_unit_files,
         capture_output=True,
         text=True,
         check=True,
         timeout=5
     )
-    return json.loads(output.stdout)
+    unit_files = json.loads(output_unit_files.stdout)
 
-def get_unit_active_status(unit_name):
-    try:
-        result = subprocess.run(
-            ["systemctl", "is-active", unit_name],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=False  # if unit is stopped/failed this command will return error and cause problems. disable it using check=False
-        )
-        status = result.stdout.strip()
-        if status:
-            return status
-        else:
-            return "unknown"
-    except Exception:
-        return "unknown"
-    
-def get_unit_description(unit_name):
-    return get_property(unit_name, "Description")
+    command_units = ["systemctl", "list-units", "--all", "-o", "json"]
+    output_units = subprocess.run(
+        command_units,
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=5
+    )
 
-def get_unit_exit_status(unit_name):
-    try:        
-        code = get_property(unit_name, "ExecMainCode")
-        status = get_property(unit_name, "ExecMainStatus")
-        result = get_property(unit_name, "Result")
+    units = json.loads(output_units.stdout)
+
+    allowed_suffixes = (".service", ".socket", ".timer", ".target")
+
+    units = [unit for unit in units if unit.get("unit", "").endswith(allowed_suffixes)]
+    unit_files = [unit_file for unit_file in unit_files if unit_file.get("unit_file", "").endswith(allowed_suffixes)]
+
+    units_dict = {item.get("unit"): item for item in units}
+
+    for unit_file in unit_files:
+        unit_name = unit_file["unit_file"]
         
-        return {
-            "code": code,
-            "status": status,
-            "result": result
+        if unit_name in units_dict:
+            unit_info = units_dict[unit_name]
+            unit_file["load"] = unit_info.get("load")
+            unit_file["active"] = unit_info.get("active")
+        
+        else:
+            unit_file["load"] = None,
+            unit_file["active"] = "inactive"
+
+    return unit_files
+
+def list_unit_descriptions(units):
+    static_details = {}
+    for unit in units:
+        unit_name = unit["unit_file"]
+        static_details[unit_name] = {
+            "description": get_property(unit_name, "Description")
         }
 
-    except:
-        return {
-            "code": "Unavailable",
-            "status": "Unavailable",
-            "result": "Unavailable"
-        }
+    return static_details
 
 def get_unit_logs(unit_name):
     try:
@@ -164,3 +166,5 @@ def copy_desktop_entry(source, destination):
 
 def remove_autostart_entry_file(entry):
     entry.unlink(missing_ok=True)
+
+list_systemd_units()

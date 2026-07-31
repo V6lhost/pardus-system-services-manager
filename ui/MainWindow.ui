@@ -54,7 +54,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="pageUnits">
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -139,9 +139,23 @@
               </widget>
              </item>
              <item row="8" column="0">
-              <widget class="QLabel" name="labelUnitSubStatus">
-               <property name="text">
-                <string>Sub Status:</string>
+              <widget class="Line" name="line_3">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="2">
+              <widget class="Line" name="line_6">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="Line" name="line_5">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -152,15 +166,8 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="Line" name="line_2">
+             <item row="2" column="2">
+              <widget class="Line" name="line_4">
                <property name="orientation">
                 <enum>Qt::Orientation::Horizontal</enum>
                </property>
@@ -170,6 +177,13 @@
               <widget class="QLabel" name="labelUnitDescription">
                <property name="text">
                 <string>Description:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="0">
+              <widget class="QPushButton" name="pushButtonEditUnitFile">
+               <property name="text">
+                <string>Edit Unit File</string>
                </property>
               </widget>
              </item>
@@ -183,37 +197,17 @@
                </property>
               </widget>
              </item>
-             <item row="10" column="0">
-              <widget class="QLabel" name="labelUnitExitCode">
+             <item row="4" column="0">
+              <widget class="QPushButton" name="pushButtonUnitStartRestart">
                <property name="text">
-                <string>Exit Code:</string>
+                <string>Start/Restart</string>
                </property>
               </widget>
              </item>
-             <item row="6" column="2">
-              <widget class="QLabel" name="labelUnitLoadStatusText">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelUnitName">
                <property name="text">
-                <string>TextLabel</string>
-               </property>
-               <property name="wordWrap">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="2">
-              <widget class="QLabel" name="labelUnitActiveStatusText">
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QRadioButton" name="radioButtonUnitEnabled">
-               <property name="text">
-                <string>Enabled</string>
+                <string>Unit Name:</string>
                </property>
               </widget>
              </item>
@@ -227,10 +221,27 @@
                </property>
               </widget>
              </item>
-             <item row="8" column="2">
-              <widget class="QLabel" name="labelUnitSubStatusText">
+             <item row="7" column="2">
+              <widget class="QLabel" name="labelUnitActiveStatusText">
                <property name="text">
                 <string>TextLabel</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QRadioButton" name="radioButtonUnitEnabled">
+               <property name="text">
+                <string>Enabled</string>
                </property>
               </widget>
              </item>
@@ -241,63 +252,24 @@
                </property>
               </widget>
              </item>
-             <item row="9" column="0">
-              <widget class="Line" name="line_3">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="10" column="2">
-              <widget class="QLabel" name="labelUnitExitCodeText">
+             <item row="6" column="2">
+              <widget class="QLabel" name="labelUnitLoadStatusText">
                <property name="text">
                 <string>TextLabel</string>
                </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="labelUnitName">
-               <property name="text">
-                <string>Unit Name:</string>
+               <property name="wordWrap">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
-              <widget class="QPushButton" name="pushButtonUnitStartRestart">
-               <property name="text">
-                <string>Start/Restart</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="Line" name="line_4">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="2">
-              <widget class="Line" name="line_5">
+             <item row="5" column="0">
+              <widget class="Line" name="line_2">
                <property name="orientation">
                 <enum>Qt::Orientation::Horizontal</enum>
                </property>
               </widget>
              </item>
              <item row="9" column="2">
-              <widget class="Line" name="line_6">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="11" column="0">
-              <widget class="QPushButton" name="pushButtonEditUnitFile">
-               <property name="text">
-                <string>Edit Unit File</string>
-               </property>
-              </widget>
-             </item>
-             <item row="11" column="2">
               <widget class="QPushButton" name="pushButtonUnitShowLogs">
                <property name="text">
                 <string>Show Logs</string>
