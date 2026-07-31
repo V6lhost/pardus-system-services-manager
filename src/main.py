@@ -29,6 +29,7 @@ from PySide6.QtGui import (
 )
 
 from helper_functions import *
+from adwaita_theme import apply_theme, set_widget_class
 
 def resource_path(relative_path):
     if hasattr(sys, "_MEIPASS"):
@@ -427,6 +428,8 @@ class EditUnitWarningDialog(QDialog):
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal.SIG_DFL) # Handle CTRL+C interrupt
     app = QApplication(sys.argv)
+
+    apply_theme(app, dark=false)
 
     translator = QTranslator()
     system_locale = QLocale.system().name()
