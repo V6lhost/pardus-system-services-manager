@@ -68,6 +68,7 @@ build: prepare update-control compile-translations
 		$(SRC_DIR)/main.py
 	@echo "[+] PyInstaller is done. Starting .deb build..."
 	mkdir -p $(DEB_OUTPUT_DIR)
+	mkdir -p $(BUILD_DIR)
 	@if [ -f "$(BUILD_DIR)/.gitkeep" ]; then rm $(BUILD_DIR)/.gitkeep; fi
 	mv dist/main/* $(BUILD_DIR)/
 	rmdir dist/main
