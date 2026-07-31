@@ -16,7 +16,10 @@ from PySide6.QtCore import (
     QSize,
     QThread,
     QTimer,
-    Signal
+    Signal,
+    QTranslator,
+    QLocale,
+    QCoreApplication
 )
 from PySide6.QtGui import (
     QStandardItem,
@@ -101,6 +104,9 @@ class MainWindow(QMainWindow):
 
         self.stackedWidget.setCurrentIndex(0)
 
+        # Set translations once when program started
+        self.set_translations()
+
         self.units = []
         self.unit_descriptions = {}
         self.descriptions_updated = False
@@ -146,18 +152,23 @@ class MainWindow(QMainWindow):
 
         self.tableViewUnits.clearSelection()
         self.tableModel.clear()
-        self.tableModel.setHorizontalHeaderLabels(["Name", "State", "Active Status", "Preset"])
+        self.tableModel.setHorizontalHeaderLabels([
+                                                QApplication.translate("main.py", "Name"),
+                                                QApplication.translate("main.py", "State"),
+                                                QApplication.translate("main.py", "Active Status"),
+                                                QApplication.translate("main.py", "Preset")
+                                                ])
 
         for unit in units:
             unit_name = unit["unit_file"]
             unit_state = unit["state"]
             unit_active_status = unit["active"]
-            unit_preset = unit["preset"]
+            unit_preset = "unavailable" if unit["preset"] is None else unit["preset"]
 
             item_name = QStandardItem(unit_name)
-            item_state = QStandardItem(unit_state)
-            item_active_status = QStandardItem(unit_active_status)
-            item_preset = QStandardItem(unit_preset)
+            item_state = QStandardItem(self.unit_state_texts[unit_state])
+            item_active_status = QStandardItem(self.unit_active_status_texts[unit_active_status])
+            item_preset = QStandardItem(self.unit_state_texts[unit_preset])
 
             self.tableModel.appendRow([item_name, item_state, item_active_status, item_preset])
 
@@ -186,14 +197,16 @@ class MainWindow(QMainWindow):
         self.groupBoxUnitDetails.show()
         self.labelUnitNameText.setText(unit_name)
 
-        unit_description = self.unit_descriptions[unit_name]["description"] if self.unit_descriptions else "Loading..."
+        unit_description = self.unit_descriptions[unit_name]["description"] if self.unit_descriptions else QApplication.translate("main.py", "Loading...")
         self.labelUnitDescriptionText.setText(unit_description)
 
-        self.radioButtonUnitEnabled.setChecked(True if unit_state == "enabled" else False)
-        self.radioButtonUnitEnabled.setEnabled(True if unit_state in ["enabled", "disabled", "alias"] else False)
+        radio_button_enabled_states = [self.unit_state_texts["enabled"], self.unit_state_texts["disabled"], self.unit_state_texts["alias"]]
 
-        self.pushButtonUnitStartRestart.setEnabled(True if unit_active_state != "unknown" else False)
-        self.pushButtonUnitStop.setEnabled(True if unit_active_state == "active" else False)
+        self.radioButtonUnitEnabled.setChecked(True if unit_state == self.unit_state_texts["enabled"] else False)
+        self.radioButtonUnitEnabled.setEnabled(True if unit_state in radio_button_enabled_states else False)
+
+        self.pushButtonUnitStartRestart.setEnabled(True if unit_active_state != self.unit_state_texts["unavailable"] else False)
+        self.pushButtonUnitStop.setEnabled(True if unit_active_state == self.unit_active_status_texts["active"] else False)
 
         self.labelUnitLoadStatusText.setText(unit_state)
         self.labelUnitActiveStatusText.setText(unit_active_state)
@@ -298,7 +311,7 @@ class MainWindow(QMainWindow):
     
     def start_restart_unit(self):
         self.pushButtonUnitStartRestart.setEnabled(False)
-        if self.labelUnitActiveStatusText.text() == "active":
+        if self.labelUnitActiveStatusText.text() == self.unit_active_status_texts["active"]:
             unit_restart(self.labelUnitNameText.text())
         else:
             unit_start(self.labelUnitNameText.text())
@@ -324,6 +337,26 @@ class MainWindow(QMainWindow):
 
         if result == QDialog.Accepted:
             self.open_file(get_unit_file_path(unit_name))
+    
+    def set_translations(self):
+            # Pre definitions for translating
+            self.unit_state_texts = {}
+            self.unit_state_texts["alias"] = QCoreApplication.translate("main.py", "Alias")
+            self.unit_state_texts["disabled"] = QCoreApplication.translate("main.py", "Disabled")
+            self.unit_state_texts["enabled"] = QCoreApplication.translate("main.py", "Enabled")
+            self.unit_state_texts["enabled-runtime"] = QCoreApplication.translate("main.py", "Enabled-Runtime")
+            self.unit_state_texts["generated"] = QCoreApplication.translate("main.py", "Generated")
+            self.unit_state_texts["indirect"] = QCoreApplication.translate("main.py", "Indirect")
+            self.unit_state_texts["masked"] = QCoreApplication.translate("main.py", "Masked")
+            self.unit_state_texts["masked-runtime"] = QCoreApplication.translate("main.py", "Masked-Runtime")
+            self.unit_state_texts["static"] = QCoreApplication.translate("main.py", "Static")
+            self.unit_state_texts["unavailable"] = QCoreApplication.translate("main.py", "Unavailable")
+            
+            
+            self.unit_active_status_texts = {}
+            self.unit_active_status_texts["active"] = QCoreApplication.translate("main.py", "Active")
+            self.unit_active_status_texts["inactive"] = QCoreApplication.translate("main.py", "Inactive")
+            self.unit_active_status_texts["failed"] = QCoreApplication.translate("main.py", "Failed")
 
 class ApplicationsDialog(QDialog):
     def __init__(self, parent=None):
@@ -394,6 +427,17 @@ class EditUnitWarningDialog(QDialog):
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal.SIG_DFL) # Handle CTRL+C interrupt
     app = QApplication(sys.argv)
+
+    translator = QTranslator()
+    system_locale = QLocale.system().name()
+    language_code = system_locale.split("_")[0]
+    translation_file = str(resource_path(f"translations/lang_{language_code}.qm"))
+
+    print(language_code)
+    
+    if translator.load(translation_file):
+        app.installTranslator(translator)
+
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

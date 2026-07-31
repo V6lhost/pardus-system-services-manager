@@ -5,14 +5,17 @@ VENV_DIR = venv
 VENV_PYTHON = $(VENV_DIR)/bin/python
 VENV_PIP = $(VENV_DIR)/bin/pip
 VENV_PYINSTALLER = $(VENV_DIR)/bin/pyinstaller
+VENV_LRELEASE = $(VENV_DIR)/bin/pyside6-lrelease
+
 BUILD_DIR = debian/usr/share/pardus-system-services-manager
 DEB_OUTPUT_DIR = output_deb
 DEB_NAME = pardus-system-services-manager-$(VERSION).deb
 SRC_DIR = src
 UI_DIR = ui
+TRANSLATIONS_DIR = translations
 REQS = requirements-lite.txt
 
-.PHONY: all prepare build clean run install-deps
+.PHONY: all prepare build clean run install-deps compile-translations update-control
 
 all: build
 
@@ -26,7 +29,7 @@ prepare:
 	@if [ ! -d "$(VENV_DIR)" ]; then \
 		echo "[+] '$(VENV_DIR)' is not found, creating..."; \
 		$(PYTHON) -m venv $(VENV_DIR); \
-		echo "[+] Updating pip, installing dependecies..."; \
+		echo "[+] Updating pip, installing dependencies..."; \
 		$(VENV_PIP) install --upgrade pip; \
 		$(VENV_PIP) install -r $(REQS); \
 	fi
@@ -44,29 +47,43 @@ update-control:
 		echo "[-] Warning: debian/DEBIAN/control not found, skipping."; \
 	fi
 
-build: prepare update-control
+compile-translations: prepare
+	@echo "[*] Compiling translation files using venv pyside6-lrelease..."
+	@if [ -f "$(VENV_LRELEASE)" ]; then \
+		for ts_file in $(TRANSLATIONS_DIR)/*.ts; do \
+			if [ -f "$$ts_file" ]; then \
+				$(VENV_LRELEASE) "$$ts_file"; \
+				echo "[+] Compiled: $$ts_file"; \
+			fi; \
+		done; \
+	else \
+		echo "[-] Warning: '$(VENV_LRELEASE)' not found, skipping translation compilation."; \
+	fi
+
+build: prepare update-control compile-translations
 	@echo "[+] Building with PyInstaller inside virtual environment..."
 	$(VENV_PYINSTALLER) --onedir --noconsole \
 		--add-data "$(UI_DIR)/:$(UI_DIR)/" \
+		--add-data "$(TRANSLATIONS_DIR)/:translations/" \
 		$(SRC_DIR)/main.py
-		@echo "[+] PyInstaller is done. Starting .deb build..."
-		mkdir $(DEB_OUTPUT_DIR)
-		rm $(BUILD_DIR)/.gitkeep; \
-		mv dist/main/* $(BUILD_DIR)/; \
-		rmdir dist/main; \
-		dpkg-deb --root-owner-group --build \
+	@echo "[+] PyInstaller is done. Starting .deb build..."
+	mkdir -p $(DEB_OUTPUT_DIR)
+	@if [ -f "$(BUILD_DIR)/.gitkeep" ]; then rm $(BUILD_DIR)/.gitkeep; fi
+	mv dist/main/* $(BUILD_DIR)/
+	rmdir dist/main
+	dpkg-deb --root-owner-group --build \
 		debian $(DEB_OUTPUT_DIR)/$(DEB_NAME)
 	@echo "[+] Build done! Output: $(DEB_OUTPUT_DIR)/$(DEB_NAME)"
 
 install-deps:
 	@if [ ! -d "$(VENV_DIR)" ]; then $(PYTHON) -m venv $(VENV_DIR); fi
-	
 
-run:
+run: compile-translations
 	@echo "[+] Running with Python inside virtual environment..."
 	$(VENV_PYTHON) $(SRC_DIR)/main.py
 
 clean:
 	@echo "[-] Cleaning up..."
 	rm -rf build/ dist/ *.spec __pycache__ $(SRC_DIR)/__pycache__ $(VENV_DIR) $(BUILD_DIR)/* $(DEB_OUTPUT_DIR)
+	rm -f $(TRANSLATIONS_DIR)/*.qm
 	@echo "[+] Done."

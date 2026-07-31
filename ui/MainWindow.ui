@@ -54,7 +54,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="pageUnits">
        <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -182,6 +182,12 @@
              </item>
              <item row="9" column="0">
               <widget class="QPushButton" name="pushButtonEditUnitFile">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>50</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Edit Unit File</string>
                </property>
@@ -189,6 +195,12 @@
              </item>
              <item row="4" column="2">
               <widget class="QPushButton" name="pushButtonUnitStop">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>50</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Stop</string>
                </property>
@@ -199,6 +211,12 @@
              </item>
              <item row="4" column="0">
               <widget class="QPushButton" name="pushButtonUnitStartRestart">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>50</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Start/Restart</string>
                </property>
@@ -271,6 +289,12 @@
              </item>
              <item row="9" column="2">
               <widget class="QPushButton" name="pushButtonUnitShowLogs">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>50</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Show Logs</string>
                </property>
@@ -422,6 +446,12 @@
                </property>
                <item alignment="Qt::AlignmentFlag::AlignBottom">
                 <widget class="QPushButton" name="pushButtonEditEntryFile">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>60</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>Edit Entry File</string>
                  </property>
@@ -429,6 +459,12 @@
                </item>
                <item alignment="Qt::AlignmentFlag::AlignBottom">
                 <widget class="QPushButton" name="pushButtonRemoveFromAutostart">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>60</height>
+                  </size>
+                 </property>
                  <property name="text">
                   <string>Remove</string>
                  </property>

@@ -2,6 +2,7 @@ venv/
 src/__pycache__
 .idea/
 .vscode
+translations/*.qm
 
 # pyinstaller
 build/
